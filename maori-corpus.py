@@ -1,5 +1,35 @@
 import wikipedia
 
+vowels = ["a","e","i","o","u","ā","ē","ī","ō","ū"]
+orthography = vowels + ["h","k","m","n","p","r","t","w","n","w"]
+consonants = ["h","k","m","n","p,","r","t","w","ng","wh"]
+
+def get_phonemes():
+	phonemes = []
+	for consonant in consonants:
+		for vowel in vowels:
+			phoneme = consonant + vowel
+			phonemes.append(phoneme)
+	return phonemes + vowels
+
+def is_maori(word):
+	phonemes = get_phonemes()
+	i = 0
+	while i < len(word):
+		current_phoneme = None
+		char = word[i]
+		if char not in orthography:
+			return False
+		for phoneme in phonemes:
+			if phoneme == word[i:i+len(phoneme)]:
+				current_phoneme = phoneme
+				break
+		if current_phoneme == None:
+			return False
+		else:
+			i = i + len(current_phoneme)
+	return True
+
 def get_links(fname):
 	''' Get all links in mi.wikipedia and save them in a file with
 		the specified name. Takes several hrs to finish atm '''
