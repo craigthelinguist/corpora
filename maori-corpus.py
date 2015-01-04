@@ -2,7 +2,9 @@ import wikipedia
 
 vowels = ["a","e","i","o","u","ā","ē","ī","ō","ū"]
 orthography = vowels + ["h","k","m","n","p","r","t","w","n","w"]
-consonants = ["h","k","m","n","p,","r","t","w","ng","wh"]
+consonants = ["h","k","m","n","p","r","t","w","ng","wh"]
+
+print(is_maori("whakapapa"))
 
 def get_phonemes():
 	phonemes = []
