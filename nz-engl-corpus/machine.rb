@@ -11,9 +11,10 @@ class Machine
     "{" => "}",     # deviant
   }
                       
-  def initialize()
+  def initialize(degree)
     @state = @@STATE_NORMAL
     @tag = nil
+    @degree = degree
   end
 
   def clean(word)
@@ -55,12 +56,19 @@ class Machine
     raise SignalException("Mangled state: " + @state.to_s)
     
   end
-  
+
   def process(line)
     line = line.downcase.split(" ")
     line.map! { |token| self.feed(token) }
-    line.select { |token| token.size > 0 }
-  end
+  
+    ngrams = []
+    (0..line.size-@degree).each do |indx|
+      ngram = line[indx..indx+@degree-1].join(" ")
+      ngrams.push(ngram)
+      end
+  
+    return ngrams
+end
   
   
 end

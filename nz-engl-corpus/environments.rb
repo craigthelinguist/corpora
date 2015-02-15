@@ -16,7 +16,7 @@ class ShellEnv
     puts "Type exit() to quit."
     while true
       print ">"
-      input = gets.strip
+      input = STDIN.gets.strip
       return if input == "exit()"
       words = @machine.process(input)
       words.each { |word| puts word }
@@ -81,21 +81,32 @@ if __FILE__ == $PROGRAM_NAME
   mode = ""
   fpath_in = ""
   fpath_out = ""
+  degree = 1
   
   # parse command line arguments
   if ARGV.size == 0
     mode = "shell"
-  elsif ARGV.size == 2
+  elsif ARGV.size == 1 && ARGV[0].start_with?("-")
+    mode = "shell"
+    arg = ARGV[0]
+    arg = arg[1..arg.size]
+    degree = Integer(arg)
+  else
+    mode = "file"
     fpath_in = ARGV[0]
     fpath_out = ARGV[1]
     abort("Could not find file " + fpath) unless File.exist?(fpath_in)
-    mode = "file"
-  else
-    abort("Bad number of arguments: " + args.size.to_s)
+    abort("Bad number of arguments: " + args.size.to_s) unless args.size < 4
+    if args.size == 3
+      abort("Unknown arg: " + ARGV[2]) unless ARGV[2].start_with?("-")
+      arg = ARGV[2]
+      arg = arg[1..arg.size]
+      degree = Integer(arg)
+    end
   end
   
   # process stuff
-  machine = Machine.new
+  machine = Machine.new(degree)
   if mode == "shell"
     ShellEnv.new(machine).run
   elsif mode == "file"
