@@ -60,12 +60,13 @@ class Machine
   def process(line)
     line = line.downcase.split(" ")
     line.map! { |token| self.feed(token) }
-  
+    line = line.select { |token| token.size > 0 }
+      
     ngrams = []
     (0..line.size-@degree).each do |indx|
       ngram = line[indx..indx+@degree-1].join(" ")
       ngrams.push(ngram)
-      end
+    end
   
     return ngrams
 end

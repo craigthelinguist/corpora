@@ -86,7 +86,8 @@ if __FILE__ == $PROGRAM_NAME
   # parse command line arguments
   if ARGV.size == 0
     mode = "shell"
-  elsif ARGV.size == 1 && ARGV[0].start_with?("-")
+  elsif ARGV.size == 1
+    abort("Unknown argument: " + ARGV[0]) unless ARGV[0].start_with?("-")
     mode = "shell"
     arg = ARGV[0]
     arg = arg[1..arg.size]
@@ -95,9 +96,9 @@ if __FILE__ == $PROGRAM_NAME
     mode = "file"
     fpath_in = ARGV[0]
     fpath_out = ARGV[1]
-    abort("Could not find file " + fpath) unless File.exist?(fpath_in)
-    abort("Bad number of arguments: " + args.size.to_s) unless args.size < 4
-    if args.size == 3
+    abort("Could not find file " + fpath_in) unless File.exist?(fpath_in)
+    abort("Bad number of arguments: " + ARGV.size.to_s) unless ARGV.size < 4
+    if ARGV.size == 3
       abort("Unknown arg: " + ARGV[2]) unless ARGV[2].start_with?("-")
       arg = ARGV[2]
       arg = arg[1..arg.size]
