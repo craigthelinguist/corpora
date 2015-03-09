@@ -6,52 +6,6 @@
 $BUF_SIZE = 4
 $BUF_IN
 $BUF_OUT
-$FPATH_IN = "input.txt"
-$FPATH_OUT = "output.txt"
-
-## ============================================================
-## Classes.
-## ============================================================
-
-class Stream
-  
-  def initialize(fpath, write_args)
-    @write_args = write_args
-    @fpath = fpath
-    open!
-  end
-
-  def read
-    @file.readline
-  end
-  
-  def readAll
-    return @file.each.select { true }
-  end
-
-  def close!
-    @file.close
-  end
-  
-  def append(content)
-    content.each { |x| @file.puts x }
-  end
-  
-  def open!
-    @file = File.new(@fpath, @write_args)
-  end
-  
-  def reload!
-    @file.close
-    @file = File.new(@fpath, @write_args)
-    @open = true
-  end
-  
-  def empty?
-    return @file.eof
-  end
-    
-end
 
 
 ## ============================================================
@@ -86,47 +40,44 @@ end
 ## Main.
 ## ============================================================
 
+$FPATH_IN = "input.txt"
+$FPATH_OUT = "output.txt"
+$FPATH_MORPHEMES = "morphemes-english.tsv"
+$FPATH_COUNTS = "morpheme-counts.tsv"
+
+# Raise IOError if input paths cannot be found.
+def validateFpaths
+  raise IOError, "Could not find " + $FPATH_IN unless File.file?($FPATH_IN)
+  raise IOError, "Could not find " + $FPATH_OUT unless File.file?($FPATH_OUT)
+  raise IOError, "Could not find " + $FPATH_MORPHEMES unless File.file?($FPATH_MORPHEMES)
+  raise IOError, "Could not find " + $FPATH_COUTNS unless File.file?($FPATH_COUNTS)
+end
+
+# Load a hash table from a tab-separated file.
+# Params:
+# +fpath+:: name of file containing the data.
+def loadHash(fpath)
+  dict = Hash.new
+  IO.foreach(fpath) do |line|
+    contents = line.split("\t")
+    morpheme = contents[0]
+    definition = contents[1]
+    dict[morpheme] = definition
+  end
+  dict
+end
+
+
 if __FILE__ == $PROGRAM_NAME
   
   # open files
-  raise IOError, "Could not find " + $FPATH_IN unless File.file?($FPATH_IN)
-  raise IOError, "Could not find " + $FPATH_OUT unless File.file?($FPATH_OUT)
-    
-  $BUF_IN = Stream.new($FPATH_IN, "r")
-  $BUF_OUT = Stream.new($FPATH_OUT, "a")
-
-  while !$BUF_IN.empty?
-    
-    # read in morphemes from input file
-    morphemes = []
-    for i in 1..$BUF_SIZE
-      break if $BUF_IN.empty?
-      morphemes.push($BUF_IN.read)
-    end
-    
-    # get user to segment
-    segmentations = []
-    morphemes.each do |line|
-      segmentation = segment(line)
-      segmentations.push(segmentation.split("-"))
-    end
-    
-    # close the input file
-    $BUF_OUT.append(segmentations)
-    remainder = $BUF_IN.readAll
-    $BUF_IN.close!
-    
-    # write changes to input file
-    out = File.new($FPATH_IN, "w")
-    remainder.each { |x| out.puts x }
-    out.close
-    
-    # reopen input file
-    $BUF_IN = Stream.new($FPATH_IN, "r")
-          
-  end 
-    
-  puts "Finished."
+  validateFpaths
+  
+  # load morpheme definitions into a hash
+  dictionary = loadHash($FPATH_MORPHEMES)
+ 
+  # load morpheme counts into a hash
+  counts = loadHash($FPATH_COUNTS)
   
 end
 
