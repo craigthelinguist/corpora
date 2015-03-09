@@ -1,72 +1,73 @@
 
-## ============================================================
-## Global.
-## ============================================================
 
-$BUF_SIZE = 4
-$BUF_IN
-$BUF_OUT
+## ============================================================
+## Global constants.
+## ============================================================
+$FPATH_IN = "input.txt"
+$FPATH_OUT = "output.txt"
+$FPATH_MORPHEMES = "morphemes-english.tsv"
+$FPATH_COUNTS = "morpheme-counts.tsv"
 
 
 ## ============================================================
 ## Functions.
 ## ============================================================
 
-def segment(morpheme)
-  
-  puts morpheme
-  print ">"
-  segmentation = gets
-  
+# Get user input specifying how the word should be segmented.
+# Params:
+# +word+:: word to segment.
+# +dictionary+:: dictionary of knonw morphemes.
+def segment(word, dictionary)
+  word
+  # todo...
 end
 
 
 ## ============================================================
-## Meta-functions.
+## I/O.
 ## ============================================================
-
-def terminate(err_msg)
-  puts err_msg
-  if $IN
-    $IN.close
-  end
-  if $OUT
-    $OUT.close
-  end
-end
-
-
-## ============================================================
-## Main.
-## ============================================================
-
-$FPATH_IN = "input.txt"
-$FPATH_OUT = "output.txt"
-$FPATH_MORPHEMES = "morphemes-english.tsv"
-$FPATH_COUNTS = "morpheme-counts.tsv"
 
 # Raise IOError if input paths cannot be found.
 def validateFpaths
   raise IOError, "Could not find " + $FPATH_IN unless File.file?($FPATH_IN)
   raise IOError, "Could not find " + $FPATH_OUT unless File.file?($FPATH_OUT)
   raise IOError, "Could not find " + $FPATH_MORPHEMES unless File.file?($FPATH_MORPHEMES)
-  raise IOError, "Could not find " + $FPATH_COUTNS unless File.file?($FPATH_COUNTS)
+  raise IOError, "Could not find " + $FPATH_COUNTS unless File.file?($FPATH_COUNTS)
 end
 
 # Load a hash table from a tab-separated file.
 # Params:
 # +fpath+:: name of file containing the data.
-def loadHash(fpath)
-  dict = Hash.new
+# +hash+:: the hash to put the data into.
+def loadHash(fpath, hash)
   IO.foreach(fpath) do |line|
     contents = line.split("\t")
     morpheme = contents[0]
     definition = contents[1]
-    dict[morpheme] = definition
+    hash[morpheme] = definition
   end
-  dict
+  return hash
 end
 
+# Trim a file by removing a specified number of lines from the start.
+# Params:
+# +fpath+:: name of file to trim.
+# +toTrim+:: number of lines to trim from start of file.
+def trimFile (fpath, toTrim)
+  # todo....
+end
+
+# Save morpheme counts to specified file.
+# Params:
+# +fpath+:: name of file to save to.
+# +counts+:: morpheme frequency counts.
+def saveCounts (fpath, counts)
+  # todo.....
+end
+
+## ============================================================
+## Main.
+## ============================================================
 
 if __FILE__ == $PROGRAM_NAME
   
@@ -74,10 +75,30 @@ if __FILE__ == $PROGRAM_NAME
   validateFpaths
   
   # load morpheme definitions into a hash
-  dictionary = loadHash($FPATH_MORPHEMES)
+  dictionary = loadHash($FPATH_MORPHEMES, Hash.new)
  
   # load morpheme counts into a hash
-  counts = loadHash($FPATH_COUNTS)
+  counts = loadHash($FPATH_COUNTS, Hash.new(0))
+  
+  # load input file.
+  REFRESH = 10 # how many lines before refreshing the file
+  loop do
+  
+    # open file and segment
+    count = 0 # number of lines read
+    IO.foreach($FPATH_IN) do |line|
+      break unless count < REFRESH
+      segmentation = segment(line, dictionary)
+      split = segmentation.split("-")
+      # atm just endlessly prints the lines
+    split.each { |m| counts[m] += 1 }
+    end
+    
+    # refresh input file and counts file
+    saveCounts($FPATH_COUNTS, counts)
+    trimFile($FPATH_IN, count)
+    
+  end
   
 end
 
