@@ -41,8 +41,6 @@ def segment(word, dictionary)
       input = gets.rstrip
       if input == "y" or input == "yes"
         return segment
-      else
-        puts "YOUR INPUT WAS " + input.inspect
       end
     else
       return segment
