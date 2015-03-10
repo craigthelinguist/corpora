@@ -26,12 +26,29 @@ def segment(word, dictionary)
       puts morpheme + " ---> " + definition
     end
   end
-  
-  # get user segmentation of the word
-  puts "-----------------"
-  puts word
     
-  segment = gets
+  loop do
+    # get user segmentation of the word
+    puts "-----------------"
+    puts word
+    segment = gets
+  
+    # check segmentation was valid
+    if not segment.tr('-', '') == word
+      puts "Your segmentation is bad (missing some characters from original word)"
+    elsif not segment.include? "-"
+      puts "No segments. Type 'y' or 'yes' if this is correct"
+      input = gets.rstrip
+      if input == "y" or input == "yes"
+        return segment
+      else
+        puts "YOUR INPUT WAS " + input.inspect
+      end
+    else
+      return segment
+    end
+  
+  end
   
 end
 
