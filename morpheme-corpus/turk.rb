@@ -20,7 +20,6 @@ $FPATH_COUNTS = "morpheme-counts.tsv"
 def segment(word, dictionary)
   
   # display all morphemes that are substrings of the current word
-  puts "Morphemes"
   puts "-----------------"
   dictionary.each do |morpheme, definition|
     if word.include? morpheme
@@ -29,7 +28,6 @@ def segment(word, dictionary)
   end
   
   # get user segmentation of the word
-  puts "Input"
   puts "-----------------"
   puts word
     
