@@ -16,10 +16,25 @@ $FPATH_COUNTS = "morpheme-counts.tsv"
 # Get user input specifying how the word should be segmented.
 # Params:
 # +word+:: word to segment.
-# +dictionary+:: dictionary of knonw morphemes.
+# +dictionary+:: dictionary of known morphemes.
 def segment(word, dictionary)
-  word
-  # todo...
+  
+  # display all morphemes that are substrings of the current word
+  puts "Morphemes"
+  puts "-----------------"
+  dictionary.each do |morpheme, definition|
+    if word.include? morpheme
+      puts morpheme + " ---> " + definition
+    end
+  end
+  
+  # get user segmentation of the word
+  puts "Input"
+  puts "-----------------"
+  puts word
+    
+  segment = gets
+  
 end
 
 

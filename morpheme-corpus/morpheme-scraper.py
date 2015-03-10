@@ -151,6 +151,7 @@ def main():
 	# load everything & save
 	morphemes, definitions = load_all()
 	save(morphemes, definitions)
+	print("done. Saved to: " + __OUTPUT)
 
 if __name__ == '__main__':
 	main()
